@@ -5,38 +5,44 @@
 </head>
 <body>
 
-  <h2>Private Chat</h2>
+<h2>Private Chat</h2>
 
-  <div id="chat"></div>
+<div id="chat"></div>
 
-  <input id="msg" placeholder="type message">
-  <button onclick="send()">Send</button>
+<input type="text" id="msg" placeholder="Type message">
+<button onclick="send()">Send</button>
 
-  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+<script src="/socket.io/socket.io.js"></script>
 
-  <script>
-    const socket = io();
+<script>
 
-    const password = prompt("Enter password");
-    socket.emit("login", password);
+const socket = io();
 
-    socket.on("message", (msg) => {
-      document.getElementById("chat").innerHTML += "<p>" + msg + "</p>";
-    });
+const password = prompt("Enter password");
 
-    function send() {
-      const input = document.getElementById("msg");
-      const msg = input.value;
+socket.emit("login", password);
 
-      if (!msg) return;
+socket.on("message", (msg) => {
 
-      socket.emit("message", msg);
+  const chat = document.getElementById("chat");
 
-      document.getElementById("chat").innerHTML += "<p><b>You:</b> " + msg + "</p>";
+  chat.innerHTML += "<p>" + msg + "</p>";
 
-      input.value = "";
-    }
-  </script>
+});
+
+function send() {
+
+  const msg = document.getElementById("msg").value;
+
+  socket.emit("message", msg);
+
+  document.getElementById("chat").innerHTML += "<p><b>You:</b> " + msg + "</p>";
+
+  document.getElementById("msg").value = "";
+
+}
+
+</script>
 
 </body>
 </html>
