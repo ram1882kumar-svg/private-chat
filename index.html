@@ -4,26 +4,39 @@
   <title>Private Chat</title>
 </head>
 <body>
-  <h2>Private Chat</h2>
 
-  <input id="msg" placeholder="message">
-  <button onclick="send()">Send</button>
+  <h2>Private Chat</h2>
 
   <div id="chat"></div>
 
+  <input id="msg" placeholder="type message">
+  <button onclick="send()">Send</button>
+
   <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+
   <script>
-    const socket = io("http://localhost:3000");
-    socket.emit("login", prompt("Enter password"));
+    const socket = io();
+
+    const password = prompt("Enter password");
+    socket.emit("login", password);
+
     socket.on("message", (msg) => {
       document.getElementById("chat").innerHTML += "<p>" + msg + "</p>";
     });
 
     function send() {
-      let msg = document.getElementById("msg").value;
+      const input = document.getElementById("msg");
+      const msg = input.value;
+
+      if (!msg) return;
+
       socket.emit("message", msg);
+
       document.getElementById("chat").innerHTML += "<p><b>You:</b> " + msg + "</p>";
+
+      input.value = "";
     }
   </script>
+
 </body>
 </html>
