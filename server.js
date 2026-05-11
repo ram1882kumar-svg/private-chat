@@ -153,3 +153,71 @@ function send(){
 
 </body>
 </html>
+const PASSWORD = "77068090";
+const express = require("express");
+const path = require("path");
+const http = require("http");
+const { Server } = require("socket.io");
+const cors = require("cors");
+
+const app = express();
+app.use(cors());
+app.use(express.static(path.join(__dirname))); // serve index.html
+
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: "*"
+  }
+});
+
+let usersInRoom = 0;
+
+// Store messages until seen
+let messages = [];
+
+io.on("connection", (socket) => {
+
+  // login password
+  socket.on("login", (pass) => {
+    if (pass !== PASSWORD) {
+      socket.disconnect();
+      return;
+    }
+
+    // send old messages
+    messages.forEach(m => {
+      socket.emit("message", m);
+    });
+  });
+
+  // only 2 users allowed
+  if (usersInRoom >= 2) {
+    socket.disconnect();
+    return;
+  }
+
+  usersInRoom++;
+
+  // message handling
+  socket.on("message", (msg) => {
+    const data = { text: msg, seen: false };
+    messages.push(data);
+    io.emit("message", data);
+  });
+
+  // message seen by client
+  socket.on("seen", (text) => {
+    messages = messages.filter(m => m.text !== text);
+  });
+
+  // disconnect handling
+  socket.on("disconnect", () => {
+    usersInRoom--;
+  });
+
+});
+
+server.listen(process.env.PORT || 3000, () => {
+  console.log("Server running on port 3000");
+});
