@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Private Chat</title>
+</head>
+<body>
+  <h2>Private Chat</h2>
+
+  <input id="msg" placeholder="message">
+  <button onclick="send()">Send</button>
+
+  <div id="chat"></div>
+
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+  <script>
+    const socket = io("http://localhost:3000");
+    socket.emit("login", prompt("Enter password"));
+    socket.on("message", (msg) => {
+      document.getElementById("chat").innerHTML += "<p>" + msg + "</p>";
+    });
+
+    function send() {
+      let msg = document.getElementById("msg").value;
+      socket.emit("message", msg);
+      document.getElementById("chat").innerHTML += "<p><b>You:</b> " + msg + "</p>";
+    }
+  </script>
+</body>
+</html>
