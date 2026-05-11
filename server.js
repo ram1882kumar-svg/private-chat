@@ -38,7 +38,7 @@ io.on("connection", (socket) => {
     socket.on("message", (msg) => {
       console.log("Message:", msg);
 
-      io.emit("message", msg);
+      socket.broadcast.emit("message", msg);
     });
 
     socket.on("disconnect", () => {
