@@ -7,58 +7,61 @@
 
     body{
       margin:0;
+      background:#111827;
       font-family:Arial;
-      background:#0f172a;
-      color:white;
       display:flex;
       justify-content:center;
       align-items:center;
       height:100vh;
     }
 
-    .chat-box{
-      width:400px;
-      height:600px;
-      background:#1e293b;
-      border-radius:20px;
+    .box{
+      width:350px;
+      height:500px;
+      background:#1f2937;
+      border-radius:15px;
       overflow:hidden;
       display:flex;
       flex-direction:column;
-      box-shadow:0 0 20px rgba(0,0,0,0.5);
     }
 
     .top{
       background:#2563eb;
-      padding:15px;
+      color:white;
       text-align:center;
+      padding:15px;
       font-size:20px;
       font-weight:bold;
     }
 
     #chat{
       flex:1;
-      padding:15px;
-      overflow-y:auto;
-    }
-
-    .msg{
-      background:#334155;
       padding:10px;
-      border-radius:10px;
-      margin-bottom:10px;
-      width:fit-content;
-      max-width:70%;
+      overflow-y:auto;
+      color:white;
     }
 
-    .you{
+    .me{
       background:#2563eb;
+      padding:8px;
+      border-radius:10px;
+      margin:5px;
+      width:fit-content;
       margin-left:auto;
+    }
+
+    .other{
+      background:#374151;
+      padding:8px;
+      border-radius:10px;
+      margin:5px;
+      width:fit-content;
     }
 
     .bottom{
       display:flex;
       padding:10px;
-      background:#0f172a;
+      background:#111827;
     }
 
     #msg{
@@ -67,31 +70,24 @@
       border:none;
       border-radius:10px;
       outline:none;
-      font-size:16px;
     }
 
     button{
-      margin-left:10px;
-      padding:10px 15px;
+      margin-left:5px;
+      padding:10px;
       border:none;
       border-radius:10px;
       background:#2563eb;
       color:white;
       cursor:pointer;
-      font-size:16px;
-    }
-
-    button:hover{
-      background:#1d4ed8;
     }
 
   </style>
-
 </head>
 
 <body>
 
-<div class="chat-box">
+<div class="box">
 
   <div class="top">
     🔒 Private Chat
@@ -100,7 +96,7 @@
   <div id="chat"></div>
 
   <div class="bottom">
-    <input type="text" id="msg" placeholder="Type message...">
+    <input id="msg" placeholder="Type message">
     <button onclick="send()">Send</button>
   </div>
 
@@ -121,9 +117,7 @@ socket.on("message", (msg) => {
   const chat = document.getElementById("chat");
 
   chat.innerHTML += `
-    <div class="msg">
-      ${msg}
-    </div>
+    <div class="other">${msg}</div>
   `;
 
   chat.scrollTop = chat.scrollHeight;
@@ -136,19 +130,17 @@ function send(){
 
   const msg = input.value;
 
-  if(!msg) return;
+  if(msg.trim() === "") return;
 
   socket.emit("message", msg);
 
-  document.getElementById("chat").innerHTML += `
-    <div class="msg you">
-      ${msg}
-    </div>
+  const chat = document.getElementById("chat");
+
+  chat.innerHTML += `
+    <div class="me">${msg}</div>
   `;
 
   input.value = "";
-
-  const chat = document.getElementById("chat");
 
   chat.scrollTop = chat.scrollHeight;
 
